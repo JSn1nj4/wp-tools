@@ -15,7 +15,7 @@ class GeneratePostUrlsCommand extends Command
 	 *
 	 * @var string
 	 */
-	protected $signature = 'get:post_urls
+	protected $signature = 'gen:post_urls
 							{--t|type=post : Supported types: post, page.}
 							{--i|input=json : Supported types: json.}
 							{--o|output=text : Supported types: text.}
