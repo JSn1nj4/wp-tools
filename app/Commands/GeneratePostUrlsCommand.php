@@ -32,11 +32,16 @@ class GeneratePostUrlsCommand extends Command
 
 	private Collection $posts;
 
+	private string $urlBase;
+
 	private function buildFullUrl(object $post): string
 	{
-		return "{$this->argument('url-base')}/{$this->buildRelativeUrl($post)}";
+		return "{$this->urlBase}/{$this->buildRelativeUrl($post)}";
 	}
 
+	/**
+	 * Build the segment of the URL that comes immediately after the site URL
+	 */
 	private function buildRelativeUrl(object $post): string
 	{
 		return match($post->post_parent) {
@@ -56,9 +61,7 @@ class GeneratePostUrlsCommand extends Command
 	 */
 	public function handle()
 	{
-		$this->posts = match($this->option('input')) {
-			default => $this->parseJson(),
-		};
+		$this->setup();
 
 		$missingParents = $this->getMissingParentPosts();
 
@@ -74,6 +77,12 @@ class GeneratePostUrlsCommand extends Command
 		return Command::SUCCESS;
 	}
 
+	/**
+	 * Collect a list of parent posts
+	 *
+	 * This allows checking if there are parent posts missing and using
+	 * the IDs in error output to the command caller.
+	 */
 	private function getMissingParentPosts(): Collection
 	{
 		return $this->posts
@@ -99,5 +108,16 @@ class GeneratePostUrlsCommand extends Command
 
 				return $filtered;
 			}, collect([]));
+	}
+
+	private function setup(): void
+	{
+		$this->urlBase = Str::endsWith($this->argument('url-base'), '/')
+			? Str::of($this->argument('url-base'))->beforeLast('/')
+			: $this->argument('url-base');
+
+		$this->posts = match($this->option('input')) {
+			default => $this->parseJson(),
+		};
 	}
 }
