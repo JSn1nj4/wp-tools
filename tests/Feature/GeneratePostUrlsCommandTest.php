@@ -5,18 +5,6 @@ beforeEach(function (): void {
 	$this->urlBaseWithSlash = 'https://example.com/';
 });
 
-it("throws an exception if 'url-base' argument is missing")
-	->tap(fn () => $this->artisan('gen:post_urls', [
-		'data' => [],
-	]))
-	->throws('Not enough arguments');
-
-it("throws an exception if 'data' argument is missing")
-	->tap(fn () => $this->artisan('gen:post_urls', [
-		'url-base' => $this->urlBase,
-	]))
-	->throws('Not enough arguments');
-
 it("supports post data in JSON format", function (): void {
 
 });
